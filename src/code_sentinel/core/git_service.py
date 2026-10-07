@@ -24,15 +24,18 @@ class GitService(GitProvider):
         :param pr_number:
         :return:
         """
-        repo = self.client.get_repo(repo_name)
-        pr = repo.get_pull(number=pr_number)
-
         headers = {
-            "Authorization": f"token {config.GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3.diff" # important to get diff format
+            "Authorization": f"Bearer {config.GITHUB_TOKEN}",
+            "Accept": "application/vnd.github.diff",
+            "User-Agent": "code-sentinel",
         }
 
-        response = requests.get(pr.diff_url, headers=headers)
+        # The web diff_url may return 404 for private repositories even with an API token.
+        response = requests.get(
+            f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}",
+            headers=headers,
+            timeout=30,
+        )
         response.raise_for_status() # raise error if request failed
 
         return response.text
