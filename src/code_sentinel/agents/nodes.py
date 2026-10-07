@@ -1,3 +1,4 @@
+# F-01/R-01: skip code retrieval while preserving the review graph.
 from typing import List
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -6,6 +7,7 @@ from code_sentinel.agents.graph_state import ReviewState
 from code_sentinel.core.llm_factory import llm_service
 from code_sentinel.agents.tools import retrieve_related_code, run_java_lint
 from code_sentinel.core.database import get_similar_mistakes
+from code_sentinel.config import config
 from code_sentinel.agents.prompts import (
     SECURITY_PROMPT, PERFORMANCE_PROMPT, STYLE_PROMPT, SUMMARY_PROMPT
 )
@@ -41,6 +43,9 @@ def _call_agent(system_prompt: str, state: ReviewState) -> List[str]:
 
 def retrieve_context_node(state: ReviewState):
     """RAG retrieve node: retrieve related code snippets from knowledge base"""
+    if not config.CODE_RETRIEVAL_ENABLED:
+        return {"repo_context": ""}
+
     diff = state["diff_content"]
 
     # 暂时简单处理, 后续考虑通过 deepagent 实现 ReAct

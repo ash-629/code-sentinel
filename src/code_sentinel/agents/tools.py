@@ -1,6 +1,5 @@
+# F-01/R-01: initialize the code knowledge base only for an enabled retrieval call.
 from langchain.tools import tool
-
-from code_sentinel.core.knowledge_base import knowledge_base
 
 @tool
 def retrieve_related_code(query: str) -> str:
@@ -13,6 +12,8 @@ def retrieve_related_code(query: str) -> str:
     Args:
         query: 搜索关键词，例如函数名 "verify_signature" 或类名 "UserManager"。
     """
+    from code_sentinel.core.knowledge_base import knowledge_base
+
     print(f"[RAG Tool] 正在搜索: {query}")
 
     results = knowledge_base.search_related_code(query, k=3)

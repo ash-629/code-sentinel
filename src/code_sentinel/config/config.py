@@ -1,3 +1,4 @@
+# F-01/R-01: keep code retrieval disabled unless explicitly enabled.
 import os
 
 from dotenv import load_dotenv
@@ -11,6 +12,9 @@ OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL")
 
 # graph config
 LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+CODE_RETRIEVAL_ENABLED = os.getenv("CODE_RETRIEVAL_ENABLED", "false").strip().lower() in {
+    "1", "true", "yes", "on"
+}
 
 GIT_WEBHOOK_SECRET = os.getenv("GIT_WEBHOOK_SECRET")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
